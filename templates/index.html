@@ -1,0 +1,63 @@
+<!-- templates/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bitcoin Price Graph</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        canvas {
+            margin-top: 50px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Bitcoin Price over the Last 30 Days</h1>
+    <canvas id="bitcoinChart" width="800" height="400"></canvas>
+
+    <script>
+        // Fetch Bitcoin price data from the Flask app
+        fetch('/data')
+            .then(response => response.json())
+            .then(data => {
+                const ctx = document.getElementById('bitcoinChart').getContext('2d');
+                const bitcoinChart = new Chart(ctx, {
+                    type: 'line',  // Line chart
+                    data: {
+                        labels: data.labels,  // Labels for X-axis (dates)
+                        datasets: [{
+                            label: 'Bitcoin Price (USD)',
+                            data: data.prices,  // Y-axis data (price)
+                            borderColor: 'rgba(75, 192, 192, 1)',
+                            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            x: {
+                                title: {
+                                    display: true,
+                                    text: 'Date'
+                                }
+                            },
+                            y: {
+                                title: {
+                                    display: true,
+                                    text: 'Price (USD)'
+                                }
+                            }
+                        }
+                    }
+                });
+            })
+            .catch(error => console.error('Error fetching data:', error));
+    </script>
+</body>
+</html>
